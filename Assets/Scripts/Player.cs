@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [Header("CONFIG")]
-    [SerializeField] Rigidbody rb;
+    [SerializeField] GameObject Ball;
     [SerializeField] Transform Camera;
     [SerializeField] CharacterController characterController;
     Vector3 Move;
@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     [SerializeField] PlayerInput playerInput;
     [SerializeField] Vector2 MoveValue;
     [SerializeField] Vector2 CameraMoveValue;
+    InputAction FireButton;
 
     [Header("MOVEMENT")]
     [SerializeField] float Speed;
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour
         playerInput.Gameplay.Movement.canceled += ctx => MoveValue = Vector2.zero;
         playerInput.Gameplay.CameraMovement.performed += ctx => CameraMoveValue = ctx.ReadValue<Vector2>();
         playerInput.Gameplay.CameraMovement.canceled += ctx => CameraMoveValue = Vector2.zero;
+        FireButton = playerInput.Gameplay.Fire;
     }
 
     private void OnEnable()
@@ -45,7 +47,6 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
         characterController = GetComponent<CharacterController>();
         Camera = transform.GetChild(0);
     }
@@ -60,5 +61,12 @@ public class Player : MonoBehaviour
 
         Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * CameraMoveValue.x);
+
+        if (FireButton.IsInProgress())
+        {
+            GameObject g = Instantiate(Ball);
+            g.transform.position = transform.position;
+            g.GetComponent<Rigidbody>().AddForce(Random.Range(-100, 100), 10, Random.Range(-100, 100));
+        }
     }
 }
