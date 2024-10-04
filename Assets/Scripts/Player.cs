@@ -1,28 +1,64 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    PlayerInput playerInput;
-    Vector2 Movevalue;
+    [Header("CONFIG")]
+    [SerializeField] Rigidbody rb;
+    [SerializeField] Transform Camera;
+    [SerializeField] CharacterController characterController;
+    Vector3 Move;
+    float xRotation;
+
+    [Header("INPUTS")]
+    [SerializeField] PlayerInput playerInput;
+    [SerializeField] Vector2 MoveValue;
+    [SerializeField] Vector2 CameraMoveValue;
+
+    [Header("MOVEMENT")]
+    [SerializeField] float Speed;
+    [SerializeField] float MouseSensitivity = 100f;
+
 
     private void Awake()
     {
         playerInput = new PlayerInput();
-        Movevalue = playerInput.Gameplay.Movement.ReadValue<Vector2>();
+        playerInput.Gameplay.Movement.performed += ctx => MoveValue = ctx.ReadValue<Vector2>();
+        playerInput.Gameplay.Movement.canceled += ctx => MoveValue = Vector2.zero;
+        playerInput.Gameplay.CameraMovement.performed += ctx => CameraMoveValue = ctx.ReadValue<Vector2>();
+        playerInput.Gameplay.CameraMovement.canceled += ctx => CameraMoveValue = Vector2.zero;
+    }
+
+    private void OnEnable()
+    {
+        playerInput.Gameplay.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerInput.Gameplay.Disable();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
+        characterController = GetComponent<CharacterController>();
+        Camera = transform.GetChild(0);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        Move = transform.right * MoveValue.x + transform.forward * MoveValue.y;
+        characterController.Move(Move * Speed * Time.deltaTime);
+        xRotation -= CameraMoveValue.y * MouseSensitivity * Time.deltaTime;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        transform.Rotate(Vector3.up * CameraMoveValue.x);
     }
 }
