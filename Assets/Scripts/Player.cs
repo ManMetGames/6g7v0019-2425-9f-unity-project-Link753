@@ -65,8 +65,8 @@ public class Player : MonoBehaviour
         if (FireButton.IsInProgress())
         {
             GameObject g = Instantiate(Ball);
-            g.transform.position = transform.position;
-            g.GetComponent<Rigidbody>().AddForce(Random.Range(-100, 100), 10, Random.Range(-100, 100));
+            g.transform.position = transform.GetChild(1).position;
+            g.GetComponent<Rigidbody>().AddForce(Camera.forward * 100, ForceMode.VelocityChange);
         }
     }
 }
