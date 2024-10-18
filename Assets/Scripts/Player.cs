@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -25,6 +26,8 @@ public class Player : MonoBehaviour
     [SerializeField] float Speed;
     [SerializeField] float MouseSensitivity = 100f;
 
+    [Header("UI")]
+    [SerializeField] TMP_Text DisplayCount;
 
     private void Awake()
     {
@@ -54,6 +57,7 @@ public class Player : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         Camera = transform.GetChild(0);
+        DisplayCount = GameObject.Find("PlayerBallCount").GetComponent<TMP_Text>();
     }
 
     // Update is called once per frame
@@ -67,6 +71,7 @@ public class Player : MonoBehaviour
 
         Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * CameraMoveValue.x * MouseSensitivity * Time.deltaTime);
+        DisplayCount.text = BulletsLeft.ToString();
 
         if (FireButton.IsInProgress() & timeSinceLastFire > Cooldown & BulletsLeft > 0)
         {

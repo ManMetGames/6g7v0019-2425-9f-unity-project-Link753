@@ -173,5 +173,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
   Nav: {fileID: 0}
-  BulletCount: 1000
+  BulletCount: 5
   Offset: {x: 0, y: 0, z: 0}
