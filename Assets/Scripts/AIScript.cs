@@ -18,12 +18,14 @@ public class AIScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Gen circle around player
-        //pick closest point on circle
-        //go to that circle
+        //Draw Line from player to object
+        //extend line until out of range
+        //go to end of line
+        transform.LookAt(Player);
         if(Vector3.Distance(transform.position, Player.transform.position) < 25)
         {
-            Nav.SetDestination(transform.GetChild(0).position);
+            Debug.Log("current player pos: " + Player.transform.position);
+            Nav.SetDestination(transform.position-transform.forward);
         }
         else
         {
