@@ -319,6 +319,7 @@ GameObject:
   - component: {fileID: 643449652}
   - component: {fileID: 643449651}
   - component: {fileID: 643449656}
+  - component: {fileID: 643449657}
   m_Layer: 0
   m_Name: AI
   m_TagString: Untagged
@@ -463,6 +464,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &643449657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643449650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d46581c6b4aa2346bef88aa1ab0e70a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
