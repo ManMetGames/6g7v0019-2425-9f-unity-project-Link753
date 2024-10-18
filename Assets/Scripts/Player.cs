@@ -62,11 +62,11 @@ public class Player : MonoBehaviour
         timeSinceLastFire += Time.deltaTime;
         Move = transform.right * MoveValue.x + transform.forward * MoveValue.y;
         characterController.Move(Move * Speed * Time.deltaTime);
-        xRotation -= CameraMoveValue.y * MouseSensitivity * Time.deltaTime;
+        xRotation -= CameraMoveValue.y * MouseSensitivity/2 * Time.deltaTime;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * CameraMoveValue.x);
+        transform.Rotate(Vector3.up * CameraMoveValue.x * MouseSensitivity * Time.deltaTime);
 
         if (FireButton.IsInProgress() & timeSinceLastFire > Cooldown & BulletsLeft > 0)
         {
@@ -87,6 +87,7 @@ public class Player : MonoBehaviour
         if(other.gameObject.layer == 7)
         {
             BulletsLeft += Random.Range(1, 3);
+            Destroy(other.gameObject);
         }
     }
 }

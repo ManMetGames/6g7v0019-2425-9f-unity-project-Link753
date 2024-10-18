@@ -8,7 +8,7 @@ public class AIScript : MonoBehaviour
     [Header("CONFIG")]
     [SerializeField] private Transform Player;
     [SerializeField] NavMeshAgent Nav;
-    [SerializeField] int BulletCount;
+    [SerializeField] int BulletCount = 1000;
     [SerializeField] Vector3 Offset;
     float passedtime = 0;
     // Start is called before the first frame update
@@ -25,10 +25,6 @@ public class AIScript : MonoBehaviour
         if(Vector3.Distance(transform.position, Player.transform.position) < 10)
         {
             Nav.SetDestination(transform.position - transform.forward);
-        }
-        else
-        {
-            Nav.SetDestination(transform.position + transform.forward);
         }
 
         passedtime += Time.deltaTime;
@@ -59,6 +55,10 @@ public class AIScript : MonoBehaviour
                 BulletCount--;
             }
         }
+        else
+        {
+            Nav.SetDestination(GameObject.FindWithTag("GiveMore").transform.position);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -66,6 +66,7 @@ public class AIScript : MonoBehaviour
         if (other.gameObject.layer == 7)
         {
             BulletCount += Random.Range(1, 3);
+            Destroy(other.gameObject);
         }
     }
 }
