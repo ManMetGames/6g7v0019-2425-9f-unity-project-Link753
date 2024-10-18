@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class BallScript : MonoBehaviour
@@ -30,6 +31,22 @@ public class BallScript : MonoBehaviour
         {
             passedTime = 0;
             gameObject.SetActive(false);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.gameObject.GetComponent<AIScript>())
+        {
+            GameObject.Find("Crosshair").GetComponent<TMP_Text>().color = Color.red;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.collider.gameObject.GetComponent<AIScript>())
+        {
+            GameObject.Find("Crosshair").GetComponent<TMP_Text>().color = Color.black;
         }
     }
 }
