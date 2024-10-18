@@ -10,8 +10,9 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject Ball;
     [SerializeField] Transform Camera;
     [SerializeField] CharacterController characterController;
+    [SerializeField] float Cooldown;
     Vector3 Move;
-    float xRotation;
+    float xRotation, timeSinceLastFire;
 
     [Header("INPUTS")]
     [SerializeField] PlayerInput playerInput;
@@ -32,6 +33,8 @@ public class Player : MonoBehaviour
         playerInput.Gameplay.CameraMovement.performed += ctx => CameraMoveValue = ctx.ReadValue<Vector2>();
         playerInput.Gameplay.CameraMovement.canceled += ctx => CameraMoveValue = Vector2.zero;
         FireButton = playerInput.Gameplay.Fire;
+
+        timeSinceLastFire = 0;
     }
 
     private void OnEnable()
@@ -54,6 +57,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timeSinceLastFire += Time.deltaTime;
         Move = transform.right * MoveValue.x + transform.forward * MoveValue.y;
         characterController.Move(Move * Speed * Time.deltaTime);
         xRotation -= CameraMoveValue.y * MouseSensitivity * Time.deltaTime;
@@ -62,11 +66,12 @@ public class Player : MonoBehaviour
         Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * CameraMoveValue.x);
 
-        if (FireButton.IsInProgress())
+        if (FireButton.IsInProgress() & timeSinceLastFire > Cooldown)
         {
             GameObject g = Instantiate(Ball);
             g.transform.position = transform.GetChild(1).position;
             g.GetComponent<Rigidbody>().AddForce(Camera.forward * 100, ForceMode.VelocityChange);
+            timeSinceLastFire = 0;
         }
     }
 }
