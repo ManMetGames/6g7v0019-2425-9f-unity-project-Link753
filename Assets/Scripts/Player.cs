@@ -68,7 +68,8 @@ public class Player : MonoBehaviour
 
         if (FireButton.IsInProgress() & timeSinceLastFire > Cooldown)
         {
-            GameObject g = Instantiate(Ball);
+            GameObject g = GameManager.instance.GetPooledObject();
+            g.SetActive(true);
             g.transform.position = transform.GetChild(1).position;
             g.GetComponent<Rigidbody>().AddForce(Camera.forward * 100, ForceMode.VelocityChange);
             timeSinceLastFire = 0;
