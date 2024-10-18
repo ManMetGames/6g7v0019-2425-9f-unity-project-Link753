@@ -9,6 +9,8 @@ public class AIScript : MonoBehaviour
     [SerializeField] private Transform Player;
     [SerializeField] NavMeshAgent Nav;
     [SerializeField] int BulletCount;
+    [SerializeField] Vector3 Offset;
+    float passedtime = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +21,7 @@ public class AIScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.LookAt(Player);
+        transform.LookAt(new Vector3(Player.position.x, transform.position.y, Player.position.z));
         if(Vector3.Distance(transform.position, Player.transform.position) < 10)
         {
             Nav.SetDestination(transform.position - transform.forward);
@@ -29,12 +31,41 @@ public class AIScript : MonoBehaviour
             Nav.SetDestination(transform.position + transform.forward);
         }
 
+        passedtime += Time.deltaTime;
+
         if (BulletCount > 0) 
         {
-            GameObject bullet = GameManager.instance.GetPooledObject();
-            bullet.SetActive(true);
-            bullet.transform.position = transform.position;
-            bullet.GetComponent<Rigidbody>().AddForce(transform.position + transform.forward);
+            if (GameManager.instance.GetPooledObject() & passedtime > GameManager.instance.AICoolDown)
+            {
+                switch (GameManager.instance.difficulty) 
+                {
+                    case GameManager.Difficulty.EASY:
+                        Offset = new Vector3(Random.Range(0, 3), Random.Range(-3, 3), Random.Range(-3, 3));
+                        break;
+                    case GameManager.Difficulty.MEDIUM:
+                        Offset = new Vector3(Random.Range(0, 2), Random.Range(-2, 2), Random.Range(-2, 2));
+                        break;
+                    case GameManager.Difficulty.HARD:
+                        Offset = new Vector3(Random.Range(0, 1), Random.Range(-1, 1), Random.Range(-1, 1));
+                        break;
+                    default:
+                        break;
+                }
+                GameObject bullet = GameManager.instance.GetPooledObject();
+                bullet.SetActive(true);
+                bullet.transform.position = transform.position + transform.forward;
+                bullet.GetComponent<Rigidbody>().AddForce((transform.forward * 40) + Offset, ForceMode.VelocityChange);
+                passedtime = 0;
+                BulletCount--;
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == 7)
+        {
+            BulletCount += Random.Range(1, 3);
         }
     }
 }

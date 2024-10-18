@@ -53,6 +53,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DebugChangeDifficulty"",
+                    ""type"": ""Value"",
+                    ""id"": ""808345f5-d905-4a2d-a7e1-2f34bc28c14b"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -363,6 +372,72 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Fire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""ArrowKeys"",
+                    ""id"": ""63b8d83a-eb64-4500-ac5f-90f3e8db0e6c"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugChangeDifficulty"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""4c9ec469-600f-4457-9015-edbb4a732609"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugChangeDifficulty"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""765ccb79-0dba-4439-ad36-60b2ce6e3eb3"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugChangeDifficulty"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Controller"",
+                    ""id"": ""6e876ad8-8429-4365-9776-8604afa18531"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugChangeDifficulty"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""00f29a79-279e-478b-9cf9-455e8044dbbb"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugChangeDifficulty"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""5015a661-9f50-4d99-893a-955ee4176346"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugChangeDifficulty"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -374,6 +449,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Gameplay_Movement = m_Gameplay.FindAction("Movement", throwIfNotFound: true);
         m_Gameplay_CameraMovement = m_Gameplay.FindAction("CameraMovement", throwIfNotFound: true);
         m_Gameplay_Fire = m_Gameplay.FindAction("Fire", throwIfNotFound: true);
+        m_Gameplay_DebugChangeDifficulty = m_Gameplay.FindAction("DebugChangeDifficulty", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -438,6 +514,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Movement;
     private readonly InputAction m_Gameplay_CameraMovement;
     private readonly InputAction m_Gameplay_Fire;
+    private readonly InputAction m_Gameplay_DebugChangeDifficulty;
     public struct GameplayActions
     {
         private @PlayerInput m_Wrapper;
@@ -445,6 +522,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_Gameplay_Movement;
         public InputAction @CameraMovement => m_Wrapper.m_Gameplay_CameraMovement;
         public InputAction @Fire => m_Wrapper.m_Gameplay_Fire;
+        public InputAction @DebugChangeDifficulty => m_Wrapper.m_Gameplay_DebugChangeDifficulty;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -463,6 +541,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Fire.started += instance.OnFire;
             @Fire.performed += instance.OnFire;
             @Fire.canceled += instance.OnFire;
+            @DebugChangeDifficulty.started += instance.OnDebugChangeDifficulty;
+            @DebugChangeDifficulty.performed += instance.OnDebugChangeDifficulty;
+            @DebugChangeDifficulty.canceled += instance.OnDebugChangeDifficulty;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -476,6 +557,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Fire.started -= instance.OnFire;
             @Fire.performed -= instance.OnFire;
             @Fire.canceled -= instance.OnFire;
+            @DebugChangeDifficulty.started -= instance.OnDebugChangeDifficulty;
+            @DebugChangeDifficulty.performed -= instance.OnDebugChangeDifficulty;
+            @DebugChangeDifficulty.canceled -= instance.OnDebugChangeDifficulty;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -498,5 +582,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnCameraMovement(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
+        void OnDebugChangeDifficulty(InputAction.CallbackContext context);
     }
 }

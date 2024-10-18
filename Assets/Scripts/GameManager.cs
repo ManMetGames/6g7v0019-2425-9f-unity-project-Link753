@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +8,21 @@ public class GameManager : MonoBehaviour
     [Header("CONFIG")]
     [SerializeField] public static GameManager instance;
 
+    [Header("GLOBAL VARIABLES")]
+    [SerializeField] public float AICoolDown;
+    public Difficulty difficulty;
+
     [Header("POOLING")]
     [SerializeField] private GameObject ObjectToPool;
     [SerializeField] List<GameObject> pooledObjects;
     [SerializeField] int poolAmount;
+
+    public enum Difficulty
+    {
+        EASY,
+        MEDIUM,
+        HARD
+    }
 
     // Start is called before the first frame update
     private void Start()
@@ -24,6 +36,11 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+
+        if(AICoolDown == 0)
+        {
+            AICoolDown = 1f;
         }
 
         pooledObjects = new List<GameObject>();
@@ -45,9 +62,9 @@ public class GameManager : MonoBehaviour
 
     public GameObject GetPooledObject()
     {
-        for(int i = 0; i < pooledObjects.Capacity; i++)
+        for(int i = 0; i < pooledObjects.Count; i++)
         {
-            if(!pooledObjects[i].activeInHierarchy)
+            if (!pooledObjects[i].activeInHierarchy)
             {
                 return pooledObjects[i];
             }

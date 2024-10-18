@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] Transform Camera;
     [SerializeField] CharacterController characterController;
     [SerializeField] float Cooldown;
+    int BulletsLeft;
     Vector3 Move;
     float xRotation, timeSinceLastFire;
 
@@ -35,6 +36,7 @@ public class Player : MonoBehaviour
         FireButton = playerInput.Gameplay.Fire;
 
         timeSinceLastFire = 0;
+        BulletsLeft = 5;
     }
 
     private void OnEnable()
@@ -66,13 +68,25 @@ public class Player : MonoBehaviour
         Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * CameraMoveValue.x);
 
-        if (FireButton.IsInProgress() & timeSinceLastFire > Cooldown)
+        if (FireButton.IsInProgress() & timeSinceLastFire > Cooldown & BulletsLeft > 0)
         {
-            GameObject g = GameManager.instance.GetPooledObject();
-            g.SetActive(true);
-            g.transform.position = transform.GetChild(1).position;
-            g.GetComponent<Rigidbody>().AddForce(Camera.forward * 100, ForceMode.VelocityChange);
-            timeSinceLastFire = 0;
+            if (GameManager.instance.GetPooledObject())
+            {
+                GameObject g = GameManager.instance.GetPooledObject();
+                g.SetActive(true);
+                g.transform.position = transform.GetChild(1).position;
+                g.GetComponent<Rigidbody>().AddForce(Camera.forward * 40, ForceMode.VelocityChange);
+                timeSinceLastFire = 0;
+                BulletsLeft--;
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.layer == 7)
+        {
+            BulletsLeft += Random.Range(1, 3);
         }
     }
 }
